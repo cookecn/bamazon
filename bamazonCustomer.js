@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var Table = require("cli-table");
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -12,84 +13,87 @@ var connection = mysql.createConnection({
     database: "bamazon"
 });
 
-
+// connect to the mysql server and sql database
 connection.connect(function(err) {
-    if (err) throw err;
-
-    start();
+  if (err) throw err;
+  // run the start function after the connection is made to prompt the user
+  selectItem();
 });
 
-function start() {
-    inquirer
-        .prompt(
-            {
-                name: "buyORexit",
-                type: "list",
-                message: "Would you like to purchase an item or exit?",
-                choices: ["BUY", "EXIT"]
-            })
-            .then(function(answer) {
-                if (answer.buyORexit === "BUY") {
-                    selectItem();
-                } else {
-                    connection.end();
-                }
-            });
-}
-
 function selectItem() {
-    connection.query("SELECT * FROM products", function(err, results) {
-      console.log(results)
+    connection.query("SELECT * FROM products", function(err, res) {
       if (err) throw err;
+      var table = new Table({
+        head: ['ID', 'Product Name', 'Department', 'Price', 'Stock Quantity']
+      });
       // once you have the items, prompt the user for which they'd like to bid on
+
+      for (var i = 0; i < res.length; i++) {
+        table.push([res[i].ItemId, res[i].ProductName, res[i].DepartmentName, res[i].Price, res[i].StockQuantity]);
+      }
+      console.log("-----------------------------");
+      console.log(table.toString());
       inquirer
         .prompt([
           {
-            name: "choice",
-            type: "rawlist",
-            choices: function() {
-              var choiceArray = [];
-              for (var i = 0; i < results.length; i++) {
-                choiceArray.push(results[i].item_id && results[i].product_name);
-              }
-              return choiceArray;
-            },
-            message: "What item ID would you like to purchase?"
-          },
-          {
-            name: "howMany",
+            name: "selectId",
             type: "input",
-            message: "How many would you like to purchase?"
-          }
-        ])
-        .then(function(answer) {
-          // get the information of the chosen item
-          console.log("You selected: " + answer.choice);
-          console.log("You selected " + answer.howMany + " items");
-          //var stockUpdate = stock_quantity - answer.howMany;
-          var chosenItem = answer.choice;
-          for (var i = 0; i < results.length; i++) {
-            if (results[i].item_id === answer.choice) {
-              chosenItem = results[i];
+            message: "What is the item ID you would like to buy?",
+            validate: function(value) {
+                if (isNaN(value) == false) {
+                    return true;
+                } else {
+                    return false;
+                }
+              }
+          }, {
+            name: "Quantity",
+            type: "input",
+            message: "How many of this item would you like to buy?",
+            validate: function(value) {
+              if (isNaN(value) == false) {
+                return true;
+              } else {
+                return false;
+              }
             }
-          }
+          }]).then(function(answer) {
 
-          if (chosenItem === product_name) {
-                connection.query(
+              var chosenId = parseInt(answer.selectId);
+               for (var i = 0; i < res.length; i++) {
+                 if (chosenId === res[i].ItemId) {
+                   console.log("It works");
+                   chosenId = res[i];
+                 } else if (chosenId > 10) {
+                    selectItem();
+                 }
+               }
 
-                    `UPDATE products SET ${stockUpdate} WHERE item_id = ${chosenItem}`,
+               console.log(chosenId.ItemId);
+              var chosenQuantity = parseInt(answer.Quantity);
+              var updatedQuantity = chosenId.StockQuantity - chosenQuantity;
 
-                    function(error) {
-                        if (error) throw err;
-                        console.log("That item is out of stock");
-                        start();
-                    }
-                );
-            } 
-            else {
-                console.log("Sorry, that item is sold out!");
-                start();
-            }
-        });
+                if (chosenQuantity < chosenId.StockQuantity) {
+                  //console.log("Your total for " + "(" + chosenQuantity + ")" + " - " + chosenId.ProductName + " is: " + chosenId.Price * chosenQuantity);
+                  connection.query(
+                    "UPDATE products SET ? WHERE ?", 
+                    [
+                      {
+                        StockQuantity: updatedQuantity
+                      }, 
+                      {
+                        ItemId: chosenId.ItemId
+                      }
+                    ], function(err, res) {
+                        if (err) throw err;
+                        selectItem();
+                    });
+      
+                } else {
+                  console.log("Sorry, insufficient Quanity at this time. All we have is " + chosenId.StockQuantity + " in our Inventory.");
+                }
+            });
     });
 }
+
+

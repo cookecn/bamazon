@@ -56,7 +56,7 @@ VALUES ("Football", "Sports", 30, 100),
 
 #Video for help!
 
-*![GitHub Logo](/images/logo.png)
+![Bamazon Start](/images/01nodebamazon.gif)
 
 #
 

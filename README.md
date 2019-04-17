@@ -56,7 +56,7 @@ VALUES ("Football", "Sports", 30, 100),
 
 #Video for help!
 
-![Bamazon Start](/images/01nodebamazon.gif)
+![Bamazon Start](./images/01nodebamazon.gif)
 
 #
 

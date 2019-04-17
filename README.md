@@ -37,6 +37,9 @@ Homework: (B)amazon node/mySQL database Application
     PRIMARY KEY (ItemId)
 );
 5. Hit the lightning bolt in the left panel of the box.
+
+![Bamazon MySQL](./images/03mysqlbamazon.gif)
+
 6. Then say "USE bamazon;"
 7. INSERT INTO products (ProductName, DepartmentName, Price, StockQuantity)
 VALUES ("Football", "Sports", 30, 100),
@@ -52,32 +55,30 @@ VALUES ("Football", "Sports", 30, 100),
 
 7. Hit the lightning bolt again after highlighting the last two sections.
 
+![Bamazon mysql2](./images/04mysqlbamazon.gif)
+
 #
 
 #Video for help!
+
+ 1. To begin, open your console inside Visual Studio Code with (CTRL + ALT + `).
+ 2. After the console appears, you will be able to start your search by starting with "node".
+ 3. After you type node, type in "bamazonCustomer.js" (case-sensitive), so that the node console knows to use the bamazonCustomer.js file. 
+  4. Hit enter, and a table should appear.
+  
+#
 
 ![Bamazon Start](./images/01nodebamazon.gif)
 
 #
 
- 1. To begin, open your console inside Visual Studio Code with (CTRL + ALT + `).
- 2. After the console appears, you will be able to start your search by starting with "node".
- 3. After you type node, type in "bamazonCustomer.js" (case-sensitive), so that the node console knows to use the bamazonCustomer.js file. 
- 4. Hit enter, and a table should appear.
  5. You will be prompted what ID of the item is that you would like to buy. Input your item id and hit enter.
  6. Now you will be asked how many of that item you would like to buy. Input your item amount and hit enter. 
  7. The amount of items that you selected, as well as the total price will appear below.
-
-
-#
-
-
-#
-
-
-
-# About
-
+ 
+ #
+ 
+![Bamazon Start](./images/02nodebamazon.gif)
 
 # Contributions
 * As of now, this repository should only be changed/altered via Vanderbilt University professors and TA's from the bootcamp.
